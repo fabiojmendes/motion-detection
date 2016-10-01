@@ -34,6 +34,13 @@ def detect_motion(frame):
 def draw_text(frame, text):
     cv2.putText(frame, text, (10, frame.shape[0]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 1, cv2.LINE_AA)
 
+def draw_countours(frame, cnts):
+    for c in cnts:
+        # compute the bounding box for the contour, draw it on the frame,
+        # and update the text
+        (x, y, w, h) = cv2.boundingRect(c)
+        cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+
 def main(args):
     frameSize = args.size
     frameRate = args.fps
@@ -71,12 +78,7 @@ def main(args):
 
             if cnts:
                 last_occupied = timestamp
-                # loop over the contours
-                for c in cnts:
-                    # compute the bounding box for the contour, draw it on the frame,
-                    # and update the text
-                    (x, y, w, h) = cv2.boundingRect(c)
-                    frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+                draw_countours(frame, cnts)
 
             # draw the text and timestamp on the frame
             end = tm.time()

@@ -1,0 +1,16 @@
+# vim: ft=systemd
+[Unit]
+Description=Motion Detection System
+After=dev-video0.device
+BindsTo=dev-video0.device
+
+[Service]
+User=alarm
+Group=alarm
+Environment=PYTHONUNBUFFERED=1
+WorkingDirectory=/opt/files
+ExecStart=/opt/bgsub.py
+Restart=on-failure
+
+[Install]
+WantedBy=dev-video0.device

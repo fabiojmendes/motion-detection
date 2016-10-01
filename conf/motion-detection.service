@@ -9,7 +9,7 @@ User=alarm
 Group=alarm
 Environment=PYTHONUNBUFFERED=1
 WorkingDirectory=/opt/files
-ExecStart=/opt/bgsub.py
+ExecStart=/usr/bin/python3 /opt/motion-detection/motion --fps 10 --size 800x448
 Restart=on-failure
 
 [Install]

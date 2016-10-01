@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 def size_tuple(size_str):
 	w, h = size_str.split('x')
-	return tuple(int(w), int(h))
+	return (int(w), int(h))
 
 if __name__ == '__main__':
 	parser = ArgumentParser(description='Process some integers.')

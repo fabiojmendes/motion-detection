@@ -4,22 +4,12 @@ import os
 from threading import Thread
 from queue import Queue
 
-# codec = 'MJPG'
-# container = 'mkv'
-
-codec = 'XVID'
-container = 'mkv'
-
-# codec = 'VP90'
-# container = 'webm'
-
-fourcc = cv2.VideoWriter_fourcc(*codec)
-
 QueueFinished = object()
 
 class VideoWriter():
-    def __init__(self, size, fps, date):
-        self.filename = ".video-{:%Y%m%d-%H%M%S}.{}".format(date, container)
+    def __init__(self, size, fps, date, codec, extension):
+        self.filename = ".video-{:%Y%m%d-%H%M%S}.{}".format(date, extension)
+        fourcc = cv2.VideoWriter_fourcc(*codec) if codec else 0
         self.video = cv2.VideoWriter(self.filename, fourcc, fps, size)
         self.queue = Queue(maxsize = 32)
         self.thread = Thread(target=self.run)

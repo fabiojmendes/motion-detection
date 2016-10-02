@@ -55,6 +55,7 @@ def main(args):
 
     out = None
     running = True
+    template = "{:%A %d %B %Y %H:%M:%S} Frame Time: {:.0f}ms FPS: {:.1f}"
 
     try:
         if not cam.isOpened():
@@ -84,14 +85,14 @@ def main(args):
             end = tm.time()
             frame_time = end - start
             start = end
-            text = "{:%A %d %B %Y %H:%M:%S} Frame Time: {:.0f}ms FPS: {:.1f}".format(current_date, frame_time * 1000, 1/frame_time)
+            text = template.format(current_date, frame_time * 1000, 1/frame_time)
             draw_text(frame, text)
             # print(text, end = '\r')
 
             # cv2.imshow("mov", frame)
             if timestamp - last_occupied <= 1:
                 if not out:
-                    out = VideoWriter(frameSize, frameRate, current_date)
+                    out = VideoWriter(frameSize, frameRate, current_date, args.codec, args.ext)
                 out.write(frame)
             else:
                 if out:

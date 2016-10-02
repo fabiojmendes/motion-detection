@@ -7,19 +7,22 @@ import signal
 from datetime import datetime
 from video import VideoWriter
 
-last_occupied = 0
-threshold = 127
-blurk = 13
+class Monitor:
+    def __init__(self):
+        self.running = True
 
-bgsub = cv2.createBackgroundSubtractorMOG2()
-# bgSub = cv2.createBackgroundSubtractorMOG2(history=50, detectShadows=True)
-# bgSub = cv2.createBackgroundSubtractorKNN(history=25, detectShadows=False)
+    def stop_running(self, signum, frame):
+        print("Stop execution due a {} signal".format(signal.Signals(signum).name))
+        self.running = False
 
-def stop_running(signum, frame):
-    global running
-    running = False
+    def is_running(self):
+        return self.running
 
-def detect_motion(frame):
+def detect_motion(bgsub, frame):
+    threshold = 127
+    blurk = 13
+    min_area = 100
+
     fgmask = bgsub.apply(frame)
     # cv2.imshow('Mask', fgmask) # cv2.resize(fgmask, (0,0), fx = 0.5, fy = 0.5))
     cv2.GaussianBlur(fgmask, (blurk, blurk), 0, dst = fgmask)
@@ -28,7 +31,7 @@ def detect_motion(frame):
     # cv2.imshow('Thresh', fgmask) # cv2.resize(fgmask, (0,0), fx = 0.5, fy = 0.5))
 
     cnts = cv2.findContours(fgmask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[1]
-    cnts = [c for c in cnts if cv2.contourArea(c) > 100]
+    cnts = [c for c in cnts if cv2.contourArea(c) > min_area]
     return cnts
 
 def draw_text(frame, text):
@@ -45,16 +48,21 @@ def main(args):
     frameSize = args.size
     frameRate = args.fps
 
+    last_occupied = 0
+
+    bgsub = cv2.createBackgroundSubtractorMOG2()
+
     cam = cv2.VideoCapture(0)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, frameSize[0])
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, frameSize[1])
     cam.set(cv2.CAP_PROP_FPS, frameRate)
     # cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
 
-    signal.signal(signal.SIGTERM, stop_running)
+    mom = Monitor()
+    signal.signal(signal.SIGTERM, mom.stop_running)
+    signal.signal(signal.SIGINT, mom.stop_running)
 
     out = None
-    running = True
     template = "{:%A %d %B %Y %H:%M:%S} Frame Time: {:.0f}ms FPS: {:.1f}"
 
     try:
@@ -67,7 +75,7 @@ def main(args):
 
         print('Starting Motion Detection')
         start = tm.time()
-        while running:
+        while mom.is_running():
             # Read next image
             ret, frame = cam.read()
             timestamp = tm.time()
@@ -75,7 +83,7 @@ def main(args):
             if not ret:
                 raise IOError('Error reading frame')
 
-            cnts = detect_motion(frame)
+            cnts = detect_motion(bgsub, frame)
 
             if cnts:
                 last_occupied = timestamp
@@ -98,8 +106,6 @@ def main(args):
                 if out:
                     out.close()
                     out = None
-
-    except KeyboardInterrupt: pass
 
     finally:
         cam.release()

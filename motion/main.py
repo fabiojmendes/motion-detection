@@ -12,7 +12,7 @@ class Monitor:
         self.running = True
 
     def stop_running(self, signum, frame):
-        print("Stop execution due a {} signal".format(signal.Signals(signum).name))
+        print("Stopping execution due to a {} signal".format(signal.Signals(signum).name))
         self.running = False
 
     def is_running(self):

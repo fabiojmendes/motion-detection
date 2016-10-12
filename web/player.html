@@ -3,46 +3,69 @@
 <head>
 <meta charset="utf-8" />
 <!-- Website Design By: www.happyworm.com -->
-<title>Demo : The jPlayerPlaylist Object</title>
+<title>Bagel's Cam</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+<style>
+	.jp-video-480p{width:800px}
+</style>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/add-on/jplayer.playlist.min.js"></script>
 <script type="text/javascript">
 //<![CDATA[
-$(document).ready(function() {
 
-	var myPlaylist = new jPlayerPlaylist({
-		jPlayer: "#jquery_jplayer_N",
-		cssSelectorAncestor: "#jp_container_N"
-	}, [], {
-		playlistOptions: {
-			enableRemoveControls: true
-		},
-		swfPath: "https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer",
-		supplied: "webmv, ogv, m4v, oga, mp3",
+var myPlaylist;
+
+function loadPlaylist() {
+	$.ajax('./media/').done(function(data) {
+		var playlist = $(data).find('a:contains(".mp4")').map(function() {
+			 var file = $(this).text();
+			 var link = './media/' + file;
+			 return { title: file, m4v: link }
+		});
+
+		myPlaylist.setPlaylist(playlist);
+
+		var currentVideo = JSON.parse(localStorage.getItem('currentVideo'));
+		if (currentVideo) {
+			var candidate = myPlaylist.playlist[currentVideo.index];
+			if (candidate && candidate.title == currentVideo.title) {
+				myPlaylist.select(currentVideo.index);
+			} else {
+				localStorage.removeItem('currentVideo');
+			}
+		}
+
+		$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
+		$('#jp_container_N').bind($.jPlayer.event.play, function(e) {
+			var currentVideo = myPlaylist.playlist[myPlaylist.current];
+			currentVideo.index = myPlaylist.current;
+			localStorage.setItem('currentVideo', JSON.stringify(currentVideo));
+			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
+		});
+
+	});
+}
+
+
+$(document).ready(function() {
+	myPlaylist = new jPlayerPlaylist({ jPlayer: "#jquery_jplayer_N", cssSelectorAncestor: "#jp_container_N" }, [], {
+		playlistOptions: {},
+		supplied: "m4v",
 		useStateClassSkin: true,
 		autoBlur: false,
-		smoothPlayBar: true,
+		smoothPlayBar: false,
 		keyEnabled: true,
-		audioFullScreen: true
+		size: {	width: 800, height: 448, cssClass: "jp-video-480p" }
 	});
 
-	$.ajax('/media/').done(function(data) {
-		$(data).find('a').each(function() {
-			var file = $(this).text();
-			if (file.match(/video-.*\.mp4/)) {
-				var link = '/media/' + file;
-				myPlaylist.add({
-					title: file,
-					m4v: link
-				});
-			}
-		});
+	$('#jp_container_N').bind($.jPlayer.event.ready, function(e) {
+		loadPlaylist();
 	});
 
 });
+
 //]]>
 </script>
 </head>
@@ -51,9 +74,6 @@ $(document).ready(function() {
 	<div class="jp-type-playlist">
 		<div id="jquery_jplayer_N" class="jp-jplayer"></div>
 		<div class="jp-gui">
-			<div class="jp-video-play">
-				<button class="jp-video-play-icon" role="button" tabindex="0">play</button>
-			</div>
 			<div class="jp-interface">
 				<div class="jp-progress">
 					<div class="jp-seek-bar">
@@ -87,15 +107,10 @@ $(document).ready(function() {
 				</div>
 			</div>
 		</div>
-		<div class="jp-playlist" style="max-height: 300px; overflow-y: auto">
+		<div class="jp-playlist" style="max-height: 100px; overflow-y: auto">
 			<ul>
-				<!-- The method Playlist.displayPlaylist() uses this unordered list -->
 				<li></li>
 			</ul>
-		</div>
-		<div class="jp-no-solution">
-			<span>Update Required</span>
-			To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
 		</div>
 	</div>
 </div>

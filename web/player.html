@@ -4,11 +4,9 @@
 <meta charset="utf-8" />
 <!-- Website Design By: www.happyworm.com -->
 <title>Bagel's Cam</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
-<style>
-	.jp-video-480p{width:800px}
-</style>
+<style>.jp-video-480p{width:800px}</style>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/add-on/jplayer.playlist.min.js"></script>
@@ -17,60 +15,76 @@
 
 var myPlaylist;
 
+function save(key, object) {
+	localStorage.setItem(key, JSON.stringify(object));
+}
+
+function load(key) {
+	return JSON.parse(localStorage.getItem(key));
+}
+
 function loadPlaylist() {
 	$.ajax('./media/').done(function(data) {
-		var playlist = $(data).find('a:contains(".mp4")').map(function() {
+		var playlist = $(data).find('a:contains(".mp4")').map(function(i) {
 			 var file = $(this).text();
 			 var link = './media/' + file;
-			 return { title: file, m4v: link }
+			 return { index: i, title: file, m4v: link }
 		});
 
 		myPlaylist.setPlaylist(playlist);
 
-		var currentVideo = JSON.parse(localStorage.getItem('currentVideo'));
+		var currentVideo = load('currentVideo');
 		if (currentVideo) {
-			var candidate = myPlaylist.playlist[currentVideo.index];
+			var candidate = playlist[currentVideo.index];
 			if (candidate && candidate.title == currentVideo.title) {
-				myPlaylist.select(currentVideo.index);
+				if (currentVideo.ended && myPlaylist.playlist.length - currentVideo.index > 1) {
+					myPlaylist.select(currentVideo.index + 1);
+				} else {
+					myPlaylist.select(currentVideo.index);
+				}
 			} else {
 				localStorage.removeItem('currentVideo');
 			}
 		}
 
+		// Sroll to Current
 		$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
-		$('#jp_container_N').bind($.jPlayer.event.play, function(e) {
-			var currentVideo = myPlaylist.playlist[myPlaylist.current];
-			currentVideo.index = myPlaylist.current;
-			localStorage.setItem('currentVideo', JSON.stringify(currentVideo));
-			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
+
+		$('#videoContainer').bind($.jPlayer.event.play, function(e) {
+			var currentVideo = playlist[myPlaylist.current];
+			save('currentVideo', currentVideo);
 		});
 
+		$('#videoContainer').bind($.jPlayer.event.ended, function(e) {
+			var currentVideo = load('currentVideo');
+			if (currentVideo) {
+				currentVideo.ended = true;
+				save('currentVideo', currentVideo);
+			}
+		});
 	});
 }
 
-
 $(document).ready(function() {
-	myPlaylist = new jPlayerPlaylist({ jPlayer: "#jquery_jplayer_N", cssSelectorAncestor: "#jp_container_N" }, [], {
-		playlistOptions: {},
+	myPlaylist = new jPlayerPlaylist({ jPlayer: "#jquery_jplayer_N", cssSelectorAncestor: "#videoContainer" }, [], {
+		playlistOptions: {
+			displayTime: 0
+		},
 		supplied: "m4v",
 		useStateClassSkin: true,
 		autoBlur: false,
 		smoothPlayBar: false,
 		keyEnabled: true,
-		size: {	width: 800, height: 448, cssClass: "jp-video-480p" }
+		size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
+		ready: loadPlaylist
 	});
-
-	$('#jp_container_N').bind($.jPlayer.event.ready, function(e) {
-		loadPlaylist();
-	});
-
 });
 
 //]]>
 </script>
 </head>
 <body>
-<div id="jp_container_N" class="jp-video" role="application" aria-label="media player">
+<div id="videoContainer" class="jp-video" role="application" aria-label="media player">
 	<div class="jp-type-playlist">
 		<div id="jquery_jplayer_N" class="jp-jplayer"></div>
 		<div class="jp-gui">
@@ -107,7 +121,7 @@ $(document).ready(function() {
 				</div>
 			</div>
 		</div>
-		<div class="jp-playlist" style="max-height: 100px; overflow-y: auto">
+		<div class="jp-playlist" style="max-height: 180px; overflow-y: auto">
 			<ul>
 				<li></li>
 			</ul>

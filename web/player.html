@@ -26,9 +26,18 @@ function load(key) {
 function loadPlaylist() {
 	$.ajax('./media/').done(function(data) {
 		var playlist = $(data).find('a:contains(".mp4")').map(function(i) {
-			 var file = $(this).text();
-			 var link = './media/' + file;
-			 return { index: i, title: file, m4v: link }
+			var file = $(this).text();
+			var m = file.match(/\w*-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})-(\d+)\.(\w+)/);
+			var video = {
+				index: i,
+				filename: file,
+				date: new Date(m[1], m[2], m[3], m[4], m[5], m[6]),
+				duration: parseInt(m[7]),
+				m4v: './media/' + file
+			};
+			video.title = video.date;
+			video.artist = video.duration;
+			return video;
 		});
 
 		myPlaylist.setPlaylist(playlist);
@@ -36,7 +45,7 @@ function loadPlaylist() {
 		var currentVideo = load('currentVideo');
 		if (currentVideo) {
 			var candidate = playlist[currentVideo.index];
-			if (candidate && candidate.title == currentVideo.title) {
+			if (candidate && candidate.filename == currentVideo.filename) {
 				if (currentVideo.ended && myPlaylist.playlist.length - currentVideo.index > 1) {
 					myPlaylist.select(currentVideo.index + 1);
 				} else {
@@ -74,7 +83,7 @@ $(document).ready(function() {
 		useStateClassSkin: true,
 		autoBlur: false,
 		smoothPlayBar: false,
-		keyEnabled: true,
+		keyEnabled: false,
 		size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
 		ready: loadPlaylist
 	});

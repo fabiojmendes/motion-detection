@@ -7,11 +7,10 @@ BindsTo=dev-video0.device
 [Service]
 User=alarm
 Group=alarm
-Environment=MOTION_HOME=/path/to/motion-detection
-Environment=PYTHONPATH=${MOTION_HOME}
+Environment=PYTHONPATH=/path/to/motion-detection
 Environment=PYTHONUNBUFFERED=1
 WorkingDirectory=/path/to/media
-ExecStart=${MOTION_HOME}/bin/motion --fps 10 --size 800x448
+ExecStart=/path/to/motion-detection/bin/motion --fps 10 --size 800x448
 Restart=on-failure
 
 [Install]

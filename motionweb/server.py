@@ -7,14 +7,16 @@ app = Flask(__name__)
 app.config.update(
     DEBUG=os.environ.get('DEBUG', 'False') == 'True',
     SECRET_KEY=os.environ.get('SECRET_KEY', os.urandom(24)),
-    MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media')
+    MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media'),
+    USERNAME=os.environ.get('USERNAME', 'admin'),
+    PASSWORD=os.environ.get('PASSWORD', 'admin'),
 )
 
 @app.before_request
 def check_auth():
     if request.path.startswith('/static') or request.endpoint == 'login':
         pass
-    elif 'auth' not in session:
+    elif not session.get('auth'):
         return redirect('/login')
 
 @app.route("/")
@@ -52,7 +54,8 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     elif request.method == 'POST':
-        session['auth'] = True
+        session['auth'] = request.form['username'] == app.config['USERNAME'] \
+                        and request.form['password'] == app.config['PASSWORD']
         return redirect('/')
 
 @app.route("/logout")

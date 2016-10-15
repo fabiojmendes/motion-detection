@@ -7,9 +7,7 @@ app = Flask(__name__)
 app.config.update(dict(
     DEBUG=True,
     SECRET_KEY='development key',
-    # USE_X_SENDFILE=True,
-    # MEDIA_FOLDER='./media'
-    MEDIA_FOLDER='/Users/fabiomendes/Desktop/motion-files'
+    MEDIA_FOLDER='./media'
 ))
 
 @app.route("/")
@@ -40,7 +38,8 @@ def media_video(video):
     print(video)
     # path = app.config['MEDIA_FOLDER'] + '/' + video
     resp = flask.make_response()
-    resp.headers.set('X-Accel-Redirect', '/protected/media/' + video)
+    resp.headers['Content-Type'] = 'video/mp4'
+    resp.headers['X-Accel-Redirect'] = '/media/' + video
     return resp
 
 

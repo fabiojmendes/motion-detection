@@ -5,7 +5,7 @@ from glob import iglob
 app = Flask(__name__)
 
 app.config.update(
-    DEBUG=os.environ.get('DEBUG', False),
+    DEBUG=os.environ.get('DEBUG', 'False') == 'True',
     SECRET_KEY=os.environ.get('SECRET_KEY', os.urandom(24)),
     MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media')
 )

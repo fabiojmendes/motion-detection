@@ -26,7 +26,8 @@ def player():
 @app.route("/playlist")
 def playlist():
     videos = []
-    for index, path in enumerate(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4')):
+    path = app.config['MEDIA_FOLDER'] + '/*.mp4'
+    for index, path in enumerate(iglob(path)):
         filename = os.path.basename(path)
         videos.append({
             'index': index,
@@ -44,7 +45,6 @@ def media_video(video):
     }
     return resp
 
-
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if flask.request.method == 'GET':
@@ -57,5 +57,3 @@ def login():
 def logout():
     flask.session.pop('auth', None)
     return flask.redirect('/')
-# if __name__ == "__main__":
-#     app.run()

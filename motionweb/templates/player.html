@@ -25,20 +25,6 @@ function load(key) {
 
 function loadPlaylist() {
 	$.ajax('/playlist').done(function(playlist) {
-		// var playlist = $(data).find('a:contains(".mp4")').map(function(i) {
-		// 	var file = $(this).text();
-		// 	var m = file.match(/\w*-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})-(\d+)\.(\w+)/);
-		// 	var video = {
-		// 		index: i,
-		// 		filename: file,
-		// 		date: new Date(m[1], m[2], m[3], m[4], m[5], m[6]),
-		// 		duration: parseInt(m[7]),
-		// 		m4v: file
-		// 	};
-		// 	video.title = video.date;
-		// 	video.artist = video.duration;
-		// 	return video;
-		// });
 
 		myPlaylist.setPlaylist(playlist);
 
@@ -92,6 +78,7 @@ $(document).ready(function() {
 //]]>
 </script>
 </head>
+
 <body>
 <div id="videoContainer" class="jp-video" role="application" aria-label="media player">
 	<div class="jp-type-playlist">
@@ -137,6 +124,6 @@ $(document).ready(function() {
 		</div>
 	</div>
 </div>
-
 </body>
+
 </html>

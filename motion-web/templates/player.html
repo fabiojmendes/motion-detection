@@ -5,13 +5,17 @@
 <!-- Website Design By: www.happyworm.com -->
 <title>Bagel's Cam</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/skin/blue.monday/css/jplayer.blue.monday.min.css" rel="stylesheet" type="text/css" />
+<link href="{{ url_for('static', filename='jplayer.blue.monday.min.css') }}" rel="stylesheet" type="text/css" />
 <style>.jp-video-480p{width:800px}</style>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/jplayer/jquery.jplayer.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.9.2/add-on/jplayer.playlist.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.jplayer.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='jplayer.playlist.min.js') }}"></script>
 <script type="text/javascript">
 //<![CDATA[
+
+{% for v in videos %}
+	// {{ v }}
+{% endfor %}
 
 var myPlaylist;
 
@@ -24,21 +28,21 @@ function load(key) {
 }
 
 function loadPlaylist() {
-	$.ajax('./media/').done(function(data) {
-		var playlist = $(data).find('a:contains(".mp4")').map(function(i) {
-			var file = $(this).text();
-			var m = file.match(/\w*-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})-(\d+)\.(\w+)/);
-			var video = {
-				index: i,
-				filename: file,
-				date: new Date(m[1], m[2], m[3], m[4], m[5], m[6]),
-				duration: parseInt(m[7]),
-				m4v: './media/' + file
-			};
-			video.title = video.date;
-			video.artist = video.duration;
-			return video;
-		});
+	$.ajax('/playlist').done(function(playlist) {
+		// var playlist = $(data).find('a:contains(".mp4")').map(function(i) {
+		// 	var file = $(this).text();
+		// 	var m = file.match(/\w*-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})-(\d+)\.(\w+)/);
+		// 	var video = {
+		// 		index: i,
+		// 		filename: file,
+		// 		date: new Date(m[1], m[2], m[3], m[4], m[5], m[6]),
+		// 		duration: parseInt(m[7]),
+		// 		m4v: file
+		// 	};
+		// 	video.title = video.date;
+		// 	video.artist = video.duration;
+		// 	return video;
+		// });
 
 		myPlaylist.setPlaylist(playlist);
 

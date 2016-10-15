@@ -1,0 +1,17 @@
+# vim: ft=systemd
+[Unit]
+Description=Motion Detection Web
+After=network.target
+
+[Service]
+User=alarm
+Group=alarm
+Environment=MOTION_HOME=/path/to/motion-detection
+Environment=PYTHONPATH=${MOTION_HOME}
+Environment=DEBUG=False
+Environment=MEDIA_FOLDER=/path/to/media
+ExecStart=${MOTION_HOME}/bin/motionweb
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

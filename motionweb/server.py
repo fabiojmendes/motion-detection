@@ -59,3 +59,6 @@ def login():
 def logout():
     session.pop('auth', None)
     return redirect('/')
+
+def main():
+    app.run()

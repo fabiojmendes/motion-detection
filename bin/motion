@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+
+from motion import app
+
+app.main()

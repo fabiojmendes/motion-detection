@@ -5,7 +5,7 @@ import cv2
 import signal
 
 from datetime import datetime
-from video import VideoWriter
+from .video import VideoWriter
 
 class Monitor:
     def __init__(self):
@@ -44,7 +44,7 @@ def draw_countours(frame, cnts):
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
 
-def main(args):
+def start(args):
     frameSize = args.size
     frameRate = args.fps
 

@@ -1,14 +1,16 @@
 import os
 import flask
+
 from flask import Flask
+from glob import iglob
 
 app = Flask(__name__)
 
-app.config.update(dict(
-    DEBUG=True,
-    SECRET_KEY='development key',
-    MEDIA_FOLDER='./media'
-))
+app.config.update(
+    DEBUG=os.environ.get('DEBUG', False),
+    SECRET_KEY=os.environ.get('SECRET_KEY', 'development key'),
+    MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media')
+)
 
 @app.route("/")
 def index():
@@ -24,19 +26,19 @@ def player():
 @app.route("/playlist")
 def playlist():
     videos = []
-    for i, f in enumerate(os.listdir(app.config['MEDIA_FOLDER'])):
+    print(app.config['MEDIA_FOLDER'])
+    for index, path in enumerate(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4')):
+        filename = os.path.basename(path)
         videos.append({
-            'index': i,
-            'filename': f,
-            'title': f,
-            'm4v': '/media/' + f
+            'index': index,
+            'filename': filename,
+            'title': filename,
+            'm4v': '/media/' + filename
         })
     return flask.jsonify(videos)
 
 @app.route("/media/<video>")
 def media_video(video):
-    print(video)
-    # path = app.config['MEDIA_FOLDER'] + '/' + video
     resp = flask.make_response()
     resp.headers['Content-Type'] = 'video/mp4'
     resp.headers['X-Accel-Redirect'] = '/media/' + video

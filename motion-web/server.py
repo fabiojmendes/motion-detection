@@ -1,27 +1,29 @@
 import os
-import flask
-
-from flask import Flask
+from flask import *
 from glob import iglob
 
 app = Flask(__name__)
 
 app.config.update(
     DEBUG=os.environ.get('DEBUG', False),
-    SECRET_KEY=os.environ.get('SECRET_KEY', 'development key'),
+    SECRET_KEY=os.environ.get('SECRET_KEY', os.urandom(24)),
     MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media')
 )
 
+@app.before_request
+def check_auth():
+    if request.path.startswith('/static') or request.endpoint == 'login':
+        pass
+    elif 'auth' not in session:
+        return redirect('/login')
+
 @app.route("/")
 def index():
-    if flask.session.get('auth'):
-        return flask.redirect('/player')
-    else:
-        return flask.redirect('/login')
+    return redirect('/player')
 
 @app.route("/player")
 def player():
-    return flask.render_template('player.html')
+    return render_template('player.html')
 
 @app.route("/playlist")
 def playlist():
@@ -35,11 +37,11 @@ def playlist():
             'title': filename,
             'm4v': '/media-lib/' + filename
         })
-    return flask.jsonify(videos)
+    return jsonify(videos)
 
 @app.route("/media-lib/<video>")
 def media_video(video):
-    resp = flask.make_response()
+    resp = make_response()
     resp.headers = {
         'X-Accel-Redirect': '/media/' + video
     }
@@ -47,13 +49,13 @@ def media_video(video):
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if flask.request.method == 'GET':
-        return flask.render_template('login.html')
-    elif flask.request.method == 'POST':
-        flask.session['auth'] = True
-        return flask.redirect('/')
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        session['auth'] = True
+        return redirect('/')
 
 @app.route("/logout")
 def logout():
-    flask.session.pop('auth', None)
-    return flask.redirect('/')
+    session.pop('auth', None)
+    return redirect('/')

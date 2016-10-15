@@ -33,11 +33,11 @@ def playlist():
             'index': index,
             'filename': filename,
             'title': filename,
-            'm4v': '/media/' + filename
+            'm4v': '/media-lib/' + filename
         })
     return flask.jsonify(videos)
 
-@app.route("/media/<video>")
+@app.route("/media-lib/<video>")
 def media_video(video):
     resp = flask.make_response()
     resp.headers['Content-Type'] = 'video/mp4'

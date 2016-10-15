@@ -26,7 +26,6 @@ def player():
 @app.route("/playlist")
 def playlist():
     videos = []
-    print(app.config['MEDIA_FOLDER'])
     for index, path in enumerate(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4')):
         filename = os.path.basename(path)
         videos.append({
@@ -40,8 +39,9 @@ def playlist():
 @app.route("/media-lib/<video>")
 def media_video(video):
     resp = flask.make_response()
-    resp.headers['Content-Type'] = 'video/mp4'
-    resp.headers['X-Accel-Redirect'] = '/media/' + video
+    resp.headers = {
+        'X-Accel-Redirect': '/media/' + video
+    }
     return resp
 
 

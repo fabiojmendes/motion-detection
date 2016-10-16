@@ -35,7 +35,21 @@
 
 			<div>
 				<video id="videoarea" controls="controls" poster="" src=""></video>
-				<ul id="playlist"></ul>
+				<div id="controls">
+					<button type="button" class="btn btn-default" aria-label="">
+						<span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-default" aria-label="">
+						<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-default" aria-label="">
+						<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-default" aria-label="">
+						<span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div id="playlist" class="list-group"></div>
 			</div>
 
 			<footer class="footer">

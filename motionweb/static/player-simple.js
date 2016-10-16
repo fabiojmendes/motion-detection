@@ -12,6 +12,7 @@ function load(key) {
 function setCurrent(video) {
 	currentVideo = video;
 	$('#videoarea').prop('src', video.m4v);
+	$('#videoarea').prop('autoplay', true);
 }
 
 function loadPlaylist() {
@@ -19,9 +20,9 @@ function loadPlaylist() {
 		playlist = pl
 
 		playlist.forEach(function(video) {
-			var item = $('<li><a href="#"></li>');
+			var item = $('<button type="button" class="list-group-item">');
 			item.data('video', video);
-			item.find('a').text(video.title);
+			item.text(video.title);
 			$('#playlist').append(item)
 		});
 
@@ -60,8 +61,10 @@ function loadPlaylist() {
 $(document).ready(function() {
 	loadPlaylist()
 
-	$('#playlist').on('click', 'li', function() {
+	$('#playlist').on('click', 'button', function() {
 		var video = $(this).data('video');
+		$('#playlist button.active').removeClass('active');
+		$(this).addClass('active')
 		setCurrent(video);
 		return false;
 	});

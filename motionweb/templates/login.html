@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
-<!-- Website Design By: www.happyworm.com -->
-<title>Bagel's Cam Login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-<script type="text/javascript">
-//<![CDATA[
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="icon" href="">
 
-//]]>
-</script>
-</head>
+		<title>Bagel's Cam - Login</title>
 
-<body>
-	<form method="post">
-		<label>
-			Username: <input type="text" name="username" />
-		</label>
-		<label>
-			Password: <input type="password" name="password" />
-		</label>
-		<input type="submit" />
-	</form>
-</body>
+		<!-- Bootstrap core CSS -->
+		<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
+		<!-- Custom styles for this template -->
+		<link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet">
+	</head>
+
+	<body>
+		<div class="container">
+			<form class="form-signin" method="post">
+				<h2 class="form-signin-heading">Please sign in</h2>
+				<label for="username" class="sr-only">Username</label>
+				<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+				<label for="password" class="sr-only">Password</label>
+				<input type="password" name="password" class="form-control" placeholder="Password" required>
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+			</form>
+		</div> <!-- /container -->
+	</body>
 </html>

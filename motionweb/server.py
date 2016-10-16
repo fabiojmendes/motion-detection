@@ -1,8 +1,10 @@
 import os
 from flask import *
+from werkzeug.contrib.fixers import ProxyFix
 from glob import iglob
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 app.config.update(
     DEBUG=os.environ.get('DEBUG', 'False') == 'True',
@@ -27,7 +29,7 @@ def index():
 
 @app.route("/player")
 def player():
-    return render_template('player.html')
+    return render_template('player-simple.html')
 
 @app.route("/playlist")
 def playlist():

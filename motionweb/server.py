@@ -16,7 +16,9 @@ app.config.update(
 def check_auth():
     if request.path.startswith('/static') or request.endpoint == 'login':
         pass
-    elif not session.get('auth'):
+    elif session.get('auth'):
+        pass
+    else:
         return redirect('/login')
 
 @app.route("/")
@@ -29,9 +31,9 @@ def player():
 
 @app.route("/playlist")
 def playlist():
+    path_list = sorted(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4'))
     videos = []
-    path = app.config['MEDIA_FOLDER'] + '/*.mp4'
-    for index, path in enumerate(iglob(path)):
+    for index, path in enumerate(path_list):
         filename = os.path.basename(path)
         videos.append({
             'index': index,

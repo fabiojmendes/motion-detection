@@ -29,7 +29,7 @@ def index():
 
 @app.route("/player")
 def player():
-    return render_template('player-simple.html')
+    return render_template('player.html')
 
 @app.route("/playlist")
 def playlist():

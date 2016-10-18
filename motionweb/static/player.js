@@ -15,7 +15,7 @@ function loadPlaylist() {
 
 		var currentVideo = load('currentVideo');
 		if (currentVideo) {
-			var candidate = playlist[currentVideo.index];
+			var candidate = myPlaylist.playlist[currentVideo.index];
 			if (candidate && candidate.filename == currentVideo.filename) {
 				if (currentVideo.ended && myPlaylist.playlist.length - currentVideo.index > 1) {
 					myPlaylist.select(currentVideo.index + 1);
@@ -31,8 +31,19 @@ function loadPlaylist() {
 		$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 
 		$('#videoContainer').bind($.jPlayer.event.play, function(e) {
-			var currentVideo = playlist[myPlaylist.current];
-			save('currentVideo', currentVideo);
+			var currentVideo = myPlaylist.playlist[myPlaylist.current];
+			if (currentVideo) {
+				save('currentVideo', currentVideo);
+			}
+
+			var lastVideo = myPlaylist.playlist[myPlaylist.playlist.length - 1];
+			$.ajax('/playlist?start=' + lastVideo.title).done(function(partialPlaylist) {
+				partialPlaylist.forEach(function(v) {
+					myPlaylist.add(v);
+				});
+			});
+
+			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 		});
 
 		$('#videoContainer').bind($.jPlayer.event.ended, function(e) {

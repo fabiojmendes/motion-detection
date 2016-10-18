@@ -34,9 +34,12 @@ def player():
 @app.route("/playlist")
 def playlist():
     path_list = sorted(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4'))
+    start = request.args.get('start')
     videos = []
     for index, path in enumerate(path_list):
         filename = os.path.basename(path)
+        if start and filename <= start:
+            continue
         videos.append({
             'index': index,
             'filename': filename,

@@ -34,11 +34,11 @@ body {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 950px;
+    max-width: 830px;
   }
 
   .jp-video-480p{
-    width:800px;
+    width:802px;
   }
 
 }

@@ -37,7 +37,7 @@ function loadPlaylist() {
 			}
 
 			var lastVideo = myPlaylist.playlist[myPlaylist.playlist.length - 1];
-			$.ajax('/playlist?start=' + lastVideo.title).done(function(partialPlaylist) {
+			$.ajax('/playlist?start=' + lastVideo.filename).done(function(partialPlaylist) {
 				partialPlaylist.forEach(function(v) {
 					myPlaylist.add(v);
 				});

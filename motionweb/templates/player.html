@@ -10,12 +10,11 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-
+    <!-- Player -->
+	<link href="{{ url_for('static', filename='jplayer.blue.monday.min.css') }}" rel="stylesheet" type="text/css" />
 	<!-- Custom styles for this template -->
 	<link href="{{ url_for('static', filename='player.css') }}" rel="stylesheet">
 
-	<!-- Player -->
-	<link href="{{ url_for('static', filename='jplayer.blue.monday.min.css') }}" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='jquery.jplayer.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='jplayer.playlist.min.js') }}"></script>
@@ -54,13 +53,6 @@
 	  					<div class="jp-title" aria-label="title">&nbsp;</div>
 	  				</div>
 	  				<div class="jp-controls-holder">
-	  					<div class="jp-volume-controls">
-	  						<button class="jp-mute" role="button" tabindex="0">mute</button>
-	  						<button class="jp-volume-max" role="button" tabindex="0">max volume</button>
-	  						<div class="jp-volume-bar">
-	  							<div class="jp-volume-bar-value"></div>
-	  						</div>
-	  					</div>
 	  					<div class="jp-controls">
 	  						<button class="jp-previous" role="button" tabindex="0">previous</button>
 	  						<button class="jp-play" role="button" tabindex="0">play</button>
@@ -82,10 +74,6 @@
 	  		</div>
 	  	</div>
 	  </div>
-
-      <footer class="footer">
-        <p>&copy; 2016 Bagel, Inc.</p>
-      </footer>
 
     </div> <!-- /container -->
 

@@ -9,7 +9,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 app.config.update(
     DEBUG=os.environ.get('DEBUG', 'False') == 'True',
-    SECRET_KEY=os.environ.get('SECRET_KEY', os.urandom(24)),
+    SECRET_KEY=os.environ.get('SECRET_KEY', 'DEVELOPMENT'),
     MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media'),
     USERNAME=os.environ.get('USERNAME', 'admin'),
     PASSWORD=os.environ.get('PASSWORD', 'admin'),
@@ -79,4 +79,4 @@ def logout():
     return redirect('/')
 
 def main():
-    app.run()
+    app.run(threaded=True)

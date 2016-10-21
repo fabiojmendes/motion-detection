@@ -1,5 +1,7 @@
 var myPlaylist;
 
+var playlistFuture = $.ajax('/playlist');
+
 function save(key, object) {
 	localStorage.setItem(key, JSON.stringify(object));
 }
@@ -9,7 +11,7 @@ function load(key) {
 }
 
 function loadPlaylist() {
-	$.ajax('/playlist').done(function(playlist) {
+	playlistFuture.done(function(playlist) {
 
 		myPlaylist.setPlaylist(playlist);
 

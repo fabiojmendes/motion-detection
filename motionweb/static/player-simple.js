@@ -41,20 +41,20 @@ function loadPlaylist() {
 		}
 
 		// Sroll to Current
-		$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
+		//$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 
-		$('#videoContainer').bind($.jPlayer.event.play, function(e) {
-			var currentVideo = playlist[myPlaylist.current];
-			save('currentVideo', currentVideo);
-		});
-
-		$('#videoContainer').bind($.jPlayer.event.ended, function(e) {
-			var currentVideo = load('currentVideo');
-			if (currentVideo) {
-				currentVideo.ended = true;
-				save('currentVideo', currentVideo);
-			}
-		});
+		// $('#videoContainer').bind($.jPlayer.event.play, function(e) {
+		// 	var currentVideo = playlist[myPlaylist.current];
+		// 	save('currentVideo', currentVideo);
+		// });
+		//
+		// $('#videoContainer').bind($.jPlayer.event.ended, function(e) {
+		// 	var currentVideo = load('currentVideo');
+		// 	if (currentVideo) {
+		// 		currentVideo.ended = true;
+		// 		save('currentVideo', currentVideo);
+		// 	}
+		// });
 	});
 }
 

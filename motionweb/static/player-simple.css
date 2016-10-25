@@ -37,7 +37,7 @@ body {
 
 /* Playlist */
 #playlist {
-  max-height: 180px;
+  max-height: 200px;
   overflow-y: auto;
 }
 

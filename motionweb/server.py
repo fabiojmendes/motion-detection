@@ -1,8 +1,8 @@
 import os
-from datetime import datetime, timedelta
 from flask import *
 from werkzeug.contrib.fixers import ProxyFix
 from glob import iglob
+from motionweb import utils
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -32,13 +32,6 @@ def index():
 def player():
     return render_template('player.html')
 
-def formatTitle(name):
-    name, _ = os.path.splitext(name)
-    prefix, strdate, strtime, duration = name.split('-')
-    date = datetime.strptime(strdate + strtime, '%Y%m%d%H%M%S')
-    duration = str(timedelta(seconds=int(duration)))
-    return '{} {:%Y-%m-%d %H:%M:%S} ({})'.format(prefix.capitalize(), date, duration[2:])
-
 @app.route("/playlist")
 def playlist():
     path_list = sorted(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4'))
@@ -48,12 +41,7 @@ def playlist():
         filename = os.path.basename(path)
         if start and filename <= start:
             continue
-        videos.append({
-            'index': index,
-            'filename': filename,
-            'title': formatTitle(filename),
-            'm4v': '/media-lib/' + filename
-        })
+        videos.append(utils.video_to_dict(filename, index))
     return jsonify(videos)
 
 @app.route("/media-lib/<video>")

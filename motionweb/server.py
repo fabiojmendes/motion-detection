@@ -3,6 +3,7 @@ from flask import *
 from werkzeug.contrib.fixers import ProxyFix
 from glob import iglob
 from motionweb import utils
+from motionweb import notifier
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -67,4 +68,5 @@ def logout():
     return redirect('/')
 
 def main():
+    notifier.start()
     app.run(threaded=True)

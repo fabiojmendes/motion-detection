@@ -1,5 +1,7 @@
 import cv2
 import os
+import sys
+import redis
 from datetime import datetime
 
 from threading import Thread
@@ -8,6 +10,8 @@ from queue import Queue
 QueueFinished = object()
 
 filename_tmpl = "video-{:%Y%m%d-%H%M%S}-{:03d}.{}"
+
+redis = redis.StrictRedis(decode_responses=True)
 
 class VideoWriter():
     def __init__(self, size, fps, date, codec, extension):
@@ -39,6 +43,11 @@ class VideoWriter():
         print('Releasing resources for [{}] and renaming it to [{}]'.format(filename, new_filename))
         video.release()
         os.rename(filename, new_filename)
+        try:
+            redis.publish('video:new', new_filename)
+        except:
+            print("Error publishing {} to redis".format(new_filename), file=sys.stderr)
+            pass
 
     def close(self, wait=False):
         self.queue.put(QueueFinished)

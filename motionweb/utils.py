@@ -1,12 +1,16 @@
 import os
 from datetime import datetime, timedelta
 
+def formatDateTime(d, t):
+    return '{}-{}-{} {}:{}:{}'.format(
+        d[:4], d[4:6], d[6:8], t[:2], t[2:4], t[4:6])
+
 def formatTitle(name):
     name, _ = os.path.splitext(name)
     prefix, strdate, strtime, duration = name.split('-')
-    date = datetime.strptime(strdate + strtime, '%Y%m%d%H%M%S')
+    date = formatDateTime(strdate, strtime)
     duration = str(timedelta(seconds=int(duration)))
-    return '{} {:%Y-%m-%d %H:%M:%S} ({})'.format(prefix.capitalize(), date, duration[2:])
+    return '{} {} ({})'.format(prefix.capitalize(), date, duration[2:])
 
 def video_to_dict(filename):
     return {

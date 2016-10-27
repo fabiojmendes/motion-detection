@@ -14,12 +14,6 @@ function remove(key) {
 	return localStorage.removeItem(key);
 }
 
-function findVideo(filename) {
-	return function(video) {
-		return filename == video.filename;
-	}
-}
-
 function loadPlaylist() {
 	playlistFuture.done(function(playlist) {
 

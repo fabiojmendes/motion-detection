@@ -95,10 +95,11 @@ def run_redis():
         for c in clients:
             c.put(msg)
 
-def main():
-    # notifier.start()
+def start_redis():
     redis_thread = Thread(target=run_redis)
     redis_thread.setDaemon(True)
     redis_thread.start()
 
+def main():
+    start_redis()
     app.run(threaded=True)

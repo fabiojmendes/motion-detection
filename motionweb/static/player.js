@@ -10,6 +10,16 @@ function load(key) {
 	return JSON.parse(localStorage.getItem(key));
 }
 
+function remove(key) {
+	return localStorage.removeItem(key);
+}
+
+function findVideo(filename) {
+	return function(video) {
+		return filename == video.filename;
+	}
+}
+
 function loadPlaylist() {
 	playlistFuture.done(function(playlist) {
 
@@ -17,15 +27,18 @@ function loadPlaylist() {
 
 		var currentVideo = load('currentVideo');
 		if (currentVideo) {
-			var candidate = myPlaylist.playlist[currentVideo.index];
-			if (candidate && candidate.filename == currentVideo.filename) {
-				if (currentVideo.ended && myPlaylist.playlist.length - currentVideo.index > 1) {
-					myPlaylist.select(currentVideo.index + 1);
+			var candidate = myPlaylist.playlist.find(function(item) {
+				return currentVideo.filename == item.filename;
+			});
+			if (candidate) {
+				var index = myPlaylist.playlist.indexOf(candidate)
+				if (currentVideo.ended && myPlaylist.playlist.length - index > 1) {
+					myPlaylist.select(index + 1);
 				} else {
-					myPlaylist.select(currentVideo.index);
+					myPlaylist.select(index);
 				}
 			} else {
-				localStorage.removeItem('currentVideo');
+				remove('currentVideo');
 			}
 		}
 
@@ -37,13 +50,6 @@ function loadPlaylist() {
 			if (currentVideo) {
 				save('currentVideo', currentVideo);
 			}
-
-			var lastVideo = myPlaylist.playlist[myPlaylist.playlist.length - 1];
-			$.ajax('/playlist?start=' + lastVideo.filename).done(function(partialPlaylist) {
-				partialPlaylist.forEach(function(v) {
-					myPlaylist.add(v);
-				});
-			});
 
 			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 		});
@@ -71,4 +77,11 @@ $(document).ready(function() {
 		size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
 		ready: loadPlaylist
 	});
+
+	var source = new EventSource('/subscribe');
+
+	source.onmessage = function (event) {
+		var video = JSON.parse(event.data)
+		myPlaylist.add(video);
+	};
 });

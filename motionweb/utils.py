@@ -8,9 +8,8 @@ def formatTitle(name):
     duration = str(timedelta(seconds=int(duration)))
     return '{} {:%Y-%m-%d %H:%M:%S} ({})'.format(prefix.capitalize(), date, duration[2:])
 
-def video_to_dict(filename, index=None):
+def video_to_dict(filename):
     return {
-        'index': index,
         'filename': filename,
         'title': formatTitle(filename),
         'm4v': '/media-lib/' + filename

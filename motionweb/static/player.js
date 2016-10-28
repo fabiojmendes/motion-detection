@@ -73,9 +73,12 @@ $(document).ready(function() {
 	});
 
 	var source = new EventSource('/subscribe');
-
-	source.onmessage = function (event) {
-		var video = JSON.parse(event.data)
+	source.addEventListener('video', function(e) {
+		var video = JSON.parse(e.data)
 		myPlaylist.add(video);
-	};
+	});
+
+	window.addEventListener("beforeunload", function (event) {
+		source.close();
+	});
 });

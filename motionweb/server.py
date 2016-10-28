@@ -1,10 +1,12 @@
 import os
+import sys
+import time
 import json
 
 from flask import *
 from werkzeug.contrib.fixers import ProxyFix
 from glob import iglob
-from queue import Queue
+from queue import Queue, Empty
 from threading import Thread
 from redis import StrictRedis
 from motionweb import utils
@@ -76,24 +78,36 @@ def logout():
 def subscribe():
     queue = Queue()
     clients.add(queue)
+    event_template = 'event: {type}\ndata: {data}\n\n'
     def gen():
         try:
             while True:
-                msg = queue.get()
-                filename = msg['data']
-                video = utils.video_to_dict(filename)
-                yield 'id: {}\ndata: {}\n\n'.format(filename, json.dumps(video))
+                try:
+                    msg = queue.get(timeout=30)
+                    filename = msg['data']
+                    video = utils.video_to_dict(filename)
+                    yield event_template.format(type='video', data=json.dumps(video))
+                except Empty:
+                    yield event_template.format(type='ping', data='')
+
         finally:
             clients.remove(queue)
     return Response(gen(), mimetype="text/event-stream")
+
+@app.route("/clients")
+def list_clients():
+    return 'Connected Clients: {}'.format(len(clients))
+
+#
+# Services
+#
 
 def run_redis():
     redis = StrictRedis(decode_responses=True)
     subscription = redis.pubsub(ignore_subscribe_messages=True)
     subscription.subscribe('video:new')
     for msg in subscription.listen():
-        for c in clients:
-            c.put(msg)
+        [c.put(msg) for c in clients]
 
 def start_redis():
     redis_thread = Thread(target=run_redis)

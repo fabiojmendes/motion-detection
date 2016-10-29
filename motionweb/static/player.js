@@ -1,6 +1,4 @@
-/*
- *
- */
+/*  */
 
 function save(key, object) {
 	localStorage.setItem(key, JSON.stringify(object));
@@ -78,11 +76,6 @@ var playerPromise = new Promise(function(resolve, reject) {
 			size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
 			ready: function() { resolve(myPlaylist) }
 		});
-
-		source.addEventListener('video:new', function(e) {
-			var video = JSON.parse(e.data)
-			myPlaylist.add(video);
-		});
 	});
 });
 
@@ -91,38 +84,13 @@ Promise.all([subscribePromise, playerPromise]).then(function(results) {
 	var player = results[1];
 
 	loadPlaylist(player, playlist);
-});
-
-window.addEventListener("unload", function(e) {
-	source.close();
-});
-
-/*
-window.addEventListener('load', function() {
-	var myPlaylist = new jPlayerPlaylist({ jPlayer: "#jquery_jplayer_N", cssSelectorAncestor: "#videoContainer" }, [], {
-		playlistOptions: {
-			displayTime: 0
-		},
-		supplied: "m4v",
-		useStateClassSkin: true,
-		autoBlur: false,
-		smoothPlayBar: false,
-		keyEnabled: false,
-		size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
-		ready: loadPlaylist
-	});
-
-	var source = new EventSource('/subscribe');
-	source.addEventListener('video:list', function(e) {
-		var videos = JSON.parse(e.data)
-		loadPlaylist(myPlaylist, videos)
-	});
 
 	source.addEventListener('video:new', function(e) {
 		var video = JSON.parse(e.data)
 		myPlaylist.add(video);
 	});
-
-	window.addEventListener("unload", source.close);
 });
-*/
+
+window.addEventListener("unload", function(e) {
+	source.close();
+});

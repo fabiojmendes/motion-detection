@@ -1,4 +1,5 @@
 import os
+import functools
 from datetime import datetime, timedelta
 
 def formatDateTime(d, t):
@@ -12,6 +13,7 @@ def formatTitle(name):
     duration = str(timedelta(seconds=int(duration)))
     return '{} {} ({})'.format(prefix.capitalize(), date, duration[2:])
 
+@functools.lru_cache(maxsize=2048)
 def video_to_dict(filename):
     return {
         'filename': filename,

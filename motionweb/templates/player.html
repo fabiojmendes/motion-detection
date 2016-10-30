@@ -1,81 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>Bagel's Cam</title>
+	<title>Bagel's Cam</title>
 
-    <!-- Custom Player -->
-	<script type="text/javascript" src="{{ url_for('static', filename='player.js') }}"></script>
+	<!-- Custom Player -->
+	<script src="{{ url_for('static', filename='player.js') }}"></script>
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <!-- Player -->
-	<link href="{{ url_for('static', filename='jplayer/jplayer.blue.monday.min.css') }}" rel="stylesheet" type="text/css" />
+	<!-- Bootstrap core CSS -->
+	<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+	<!-- Player -->
+	<link href="{{ url_for('static', filename='jplayer/jplayer.blue.monday.min.css') }}" rel="stylesheet" />
 	<!-- Custom styles for this template -->
-	<link href="{{ url_for('static', filename='player.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='player.css') }}" rel="stylesheet" />
 
-	<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='jplayer/jquery.jplayer.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='jplayer/jplayer.playlist.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='jplayer/jquery.jplayer.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='jplayer/jplayer.playlist.min.js') }}"></script>
+</head>
 
-  </head>
+<body>
 
-  <body>
+	<div class="container">
+		<div class="header clearfix">
+			<nav>
+				<ul class="nav nav-pills pull-right">
+					<li role="presentation" class="active"><a href="/player">Player</a></li>
+					<li role="presentation"><a href="/logout">Logout</a></li>
+				</ul>
+			</nav>
+			<h3 class="text-muted">Bagel's Cam</h3>
+		</div>
 
-    <div class="container">
-      <div class="header clearfix">
-        <nav>
-          <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="/player">Player</a></li>
-            <li role="presentation"><a href="/logout">Logout</a></li>
-          </ul>
-        </nav>
-        <h3 class="text-muted">Bagel's Cam</h3>
-      </div>
+		<div id="videoContainer" class="jp-video" role="application" aria-label="media player">
+			<div class="jp-type-playlist">
+				<div id="jplayer" class="jp-jplayer"></div>
+				<div class="jp-gui">
+					<div class="jp-interface">
+						<div class="jp-progress">
+							<div class="jp-seek-bar">
+								<div class="jp-play-bar"></div>
+							</div>
+						</div>
+						<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+						<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+						<div class="jp-details">
+							<div class="jp-title" aria-label="title">&nbsp;</div>
+						</div>
+						<div class="jp-controls-holder">
+							<div class="jp-controls">
+								<button class="jp-previous" role="button" tabindex="0">previous</button>
+								<button class="jp-play" role="button" tabindex="0">play</button>
+								<button class="jp-stop" role="button" tabindex="0">stop</button>
+								<button class="jp-next" role="button" tabindex="0">next</button>
+							</div>
+							<div class="jp-toggles">
+								<button class="jp-repeat" role="button" tabindex="0">repeat</button>
+								<button class="jp-shuffle" role="button" tabindex="0">shuffle</button>
+								<button class="jp-full-screen" role="button" tabindex="0">full screen</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="jp-playlist" style="max-height: 180px; overflow-y: auto">
+					<ul>
+						<li></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 
-	  <div id="videoContainer" class="jp-video" role="application" aria-label="media player">
-	  	<div class="jp-type-playlist">
-	  		<div id="jquery_jplayer_N" class="jp-jplayer"></div>
-	  		<div class="jp-gui">
-	  			<div class="jp-interface">
-	  				<div class="jp-progress">
-	  					<div class="jp-seek-bar">
-	  						<div class="jp-play-bar"></div>
-	  					</div>
-	  				</div>
-	  				<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
-	  				<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
-	  				<div class="jp-details">
-	  					<div class="jp-title" aria-label="title">&nbsp;</div>
-	  				</div>
-	  				<div class="jp-controls-holder">
-	  					<div class="jp-controls">
-	  						<button class="jp-previous" role="button" tabindex="0">previous</button>
-	  						<button class="jp-play" role="button" tabindex="0">play</button>
-	  						<button class="jp-stop" role="button" tabindex="0">stop</button>
-	  						<button class="jp-next" role="button" tabindex="0">next</button>
-	  					</div>
-	  					<div class="jp-toggles">
-	  						<button class="jp-repeat" role="button" tabindex="0">repeat</button>
-	  						<button class="jp-shuffle" role="button" tabindex="0">shuffle</button>
-	  						<button class="jp-full-screen" role="button" tabindex="0">full screen</button>
-	  					</div>
-	  				</div>
-	  			</div>
-	  		</div>
-	  		<div class="jp-playlist" style="max-height: 180px; overflow-y: auto">
-	  			<ul>
-	  				<li></li>
-	  			</ul>
-	  		</div>
-	  	</div>
-	  </div>
-
-    </div> <!-- /container -->
-
-  </body>
+</body>
 </html>

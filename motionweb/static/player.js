@@ -12,20 +12,20 @@ function remove(key) {
 	return localStorage.removeItem(key);
 }
 
-function loadPlaylist(myPlaylist, videos) {
-	myPlaylist.setPlaylist(videos);
+function loadPlaylist(player, playlist) {
+	player.setPlaylist(playlist);
 
 	var currentVideo = load('currentVideo');
 	if (currentVideo) {
-		var candidate = myPlaylist.playlist.find(function(item) {
+		var candidate = player.playlist.find(function(item) {
 			return currentVideo.filename == item.filename;
 		});
 		if (candidate) {
-			var index = myPlaylist.playlist.indexOf(candidate)
-			if (currentVideo.ended && myPlaylist.playlist.length - index > 1) {
-				myPlaylist.select(index + 1);
+			var index = player.playlist.indexOf(candidate)
+			if (currentVideo.ended && player.playlist.length - index > 1) {
+				player.select(index + 1);
 			} else {
-				myPlaylist.select(index);
+				player.select(index);
 			}
 		} else {
 			remove('currentVideo');
@@ -36,7 +36,7 @@ function loadPlaylist(myPlaylist, videos) {
 	$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 
 	$('#videoContainer').bind($.jPlayer.event.play, function(e) {
-		var currentVideo = myPlaylist.playlist[myPlaylist.current];
+		var currentVideo = player.playlist[player.current];
 		if (currentVideo) {
 			save('currentVideo', currentVideo);
 		}
@@ -53,7 +53,7 @@ function loadPlaylist(myPlaylist, videos) {
 	});
 }
 
-var source = new EventSource('/subscribe');
+var source = new EventSource('/playlist');
 
 var subscribePromise = new Promise(function(resolve, reject) {
 	source.addEventListener('video:list', function(e) {
@@ -64,7 +64,7 @@ var subscribePromise = new Promise(function(resolve, reject) {
 
 var playerPromise = new Promise(function(resolve, reject) {
 	window.addEventListener('load', function() {
-		var myPlaylist = new jPlayerPlaylist({ jPlayer: "#jquery_jplayer_N", cssSelectorAncestor: "#videoContainer" }, [], {
+		var player = new jPlayerPlaylist({ jPlayer: "#jplayer", cssSelectorAncestor: "#videoContainer" }, [], {
 			playlistOptions: {
 				displayTime: 0
 			},
@@ -74,7 +74,7 @@ var playerPromise = new Promise(function(resolve, reject) {
 			smoothPlayBar: false,
 			keyEnabled: false,
 			size: {	width: 800, height: 448, cssClass: "jp-video-480p" },
-			ready: function() { resolve(myPlaylist) }
+			ready: function() { resolve(player) }
 		});
 	});
 });
@@ -86,8 +86,8 @@ Promise.all([subscribePromise, playerPromise]).then(function(results) {
 	loadPlaylist(player, playlist);
 
 	source.addEventListener('video:new', function(e) {
-		var video = JSON.parse(e.data)
-		myPlaylist.add(video);
+		var videos = JSON.parse(e.data)
+		videos.forEach(function(i) { player.add(i) });
 	});
 });
 

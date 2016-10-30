@@ -42,11 +42,11 @@ def index():
 def player():
     return render_template('player.html')
 
-@app.route("/subscribe")
+@app.route("/playlist")
 def subscribe():
     queue = Queue()
     clients.add(queue)
-    event_template = 'event: {type}\ndata: {data}\n\n'
+    event_template = 'event: {event}\ndata: {data}\n\n'
     def gen():
         try:
             path_list = sorted(iglob(app.config['MEDIA_FOLDER'] + '/*.mp4'))
@@ -54,16 +54,17 @@ def subscribe():
             for path in path_list:
                 filename = os.path.basename(path)
                 video_list.append(utils.video_to_dict(filename))
-            yield event_template.format(type='video:list', data=json.dumps(video_list))
+            yield event_template.format(event='video:list', data=json.dumps(video_list))
 
             while True:
                 try:
-                    msg = queue.get(timeout=30)
+                    msg = queue.get(timeout=45)
                     filename = msg['data']
-                    video = utils.video_to_dict(filename)
-                    yield event_template.format(type='video:new', data=json.dumps(video))
+                    videos = [utils.video_to_dict(filename)]
                 except Empty:
-                    yield event_template.format(type='ping', data='')
+                    videos = []
+
+                yield event_template.format(event='video:new', data=json.dumps(videos))
 
         finally:
             clients.remove(queue)

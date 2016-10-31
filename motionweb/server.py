@@ -20,7 +20,7 @@ app.config.update(
     SECRET_KEY=os.environ.get('SECRET_KEY', 'DEVELOPMENT'),
     MEDIA_FOLDER=os.environ.get('MEDIA_FOLDER', './media'),
     USERNAME=os.environ.get('USERNAME', 'admin'),
-    PASSWORD=os.environ.get('PASSWORD', 'admin'),
+    PASSWORD=os.environ.get('PASSWORD', 'admin')
 )
 
 clients = set()
@@ -87,12 +87,18 @@ def login():
 
 @app.route("/logout")
 def logout():
-    session.pop('auth', None)
+    session.clear()
     return redirect('/')
 
-@app.route("/clients")
+@app.route("/info")
 def list_clients():
-    return 'Connected Clients: {}'.format(len(clients))
+    tmpl = '''
+        <ul>
+            <li>Connected Clients: {}</li>
+            <li>Cache: {}</li>
+        <ul>
+    '''
+    return tmpl.format(len(clients), utils.video_to_dict.cache_info())
 
 #
 # Services

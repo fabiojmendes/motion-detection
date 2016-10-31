@@ -58,7 +58,7 @@ var source = new EventSource('/playlist');
 var subscribePromise = new Promise(function(resolve, reject) {
 	source.addEventListener('video:list', function(e) {
 		var videos = JSON.parse(e.data)
-		resolve(videos)
+		resolve(videos);
 	});
 });
 
@@ -86,8 +86,16 @@ Promise.all([subscribePromise, playerPromise]).then(function(results) {
 	loadPlaylist(player, playlist);
 
 	source.addEventListener('video:new', function(e) {
-		var videos = JSON.parse(e.data)
-		videos.forEach(function(i) { player.add(i) });
+		var videos = JSON.parse(e.data);
+		videos.forEach(function(video) { player.add(video) });
+		if (videos.length > 0) {
+			var jPlayer = $('#jplayer').data().jPlayer;
+			var currentVideo = load('currentVideo');
+			if (jPlayer.status.paused && currentVideo && currentVideo.ended) {
+				player.select(player.current + 1);
+			}
+			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
+		}
 	});
 });
 

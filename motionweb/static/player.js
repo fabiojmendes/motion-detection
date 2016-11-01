@@ -93,6 +93,7 @@ Promise.all([subscribePromise, playerPromise]).then(function(results) {
 			var currentVideo = load('currentVideo');
 			if (jPlayer.status.paused && currentVideo && currentVideo.ended) {
 				player.select(player.current + 1);
+				save('currentVideo', player.playlist[player.current]);
 			}
 			$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 		}

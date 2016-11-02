@@ -8,6 +8,17 @@
 
 	<title>Bagel's Cam</title>
 
+	<script>
+		let source = new EventSource('/playlist');
+
+		let playlistPromise = new Promise(function(resolve, reject) {
+			source.addEventListener('video:list', function(e) {
+				let videos = JSON.parse(e.data)
+				resolve(videos);
+			});
+		});
+	</script>
+
 	<!-- Custom Player -->
 	<script src="{{ url_for('static', filename='player.js') }}"></script>
 

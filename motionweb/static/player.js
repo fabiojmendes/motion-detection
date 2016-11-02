@@ -15,13 +15,13 @@ function remove(key) {
 function loadPlaylist(player, playlist) {
 	player.setPlaylist(playlist);
 
-	var currentVideo = load('currentVideo');
+	let currentVideo = load('currentVideo');
 	if (currentVideo) {
-		var candidate = player.playlist.find(function(item) {
+		let candidate = player.playlist.find(function(item) {
 			return currentVideo.filename == item.filename;
 		});
 		if (candidate) {
-			var index = player.playlist.indexOf(candidate)
+			let index = player.playlist.indexOf(candidate)
 			if (currentVideo.ended && player.playlist.length - index > 1) {
 				player.select(index + 1);
 			} else {
@@ -36,7 +36,7 @@ function loadPlaylist(player, playlist) {
 	$('li.jp-playlist-current').each(function() { this.scrollIntoView() });
 
 	$('#videoContainer').bind($.jPlayer.event.play, function(e) {
-		var currentVideo = player.playlist[player.current];
+		let currentVideo = player.playlist[player.current];
 		if (currentVideo) {
 			save('currentVideo', currentVideo);
 		}
@@ -45,7 +45,7 @@ function loadPlaylist(player, playlist) {
 	});
 
 	$('#videoContainer').bind($.jPlayer.event.ended, function(e) {
-		var currentVideo = load('currentVideo');
+		let currentVideo = load('currentVideo');
 		if (currentVideo) {
 			currentVideo.ended = true;
 			save('currentVideo', currentVideo);
@@ -53,18 +53,9 @@ function loadPlaylist(player, playlist) {
 	});
 }
 
-var source = new EventSource('/playlist');
-
-var subscribePromise = new Promise(function(resolve, reject) {
-	source.addEventListener('video:list', function(e) {
-		var videos = JSON.parse(e.data)
-		resolve(videos);
-	});
-});
-
-var playerPromise = new Promise(function(resolve, reject) {
+let playerPromise = new Promise(function(resolve, reject) {
 	window.addEventListener('load', function() {
-		var player = new jPlayerPlaylist({ jPlayer: "#jplayer", cssSelectorAncestor: "#videoContainer" }, [], {
+		let player = new jPlayerPlaylist({ jPlayer: "#jplayer", cssSelectorAncestor: "#videoContainer" }, [], {
 			playlistOptions: {
 				displayTime: 0
 			},
@@ -79,18 +70,20 @@ var playerPromise = new Promise(function(resolve, reject) {
 	});
 });
 
-Promise.all([subscribePromise, playerPromise]).then(function(results) {
-	var playlist = results[0];
-	var player = results[1];
+Promise.all([playlistPromise, playerPromise]).then(function(results) {
+	let playlist = results[0];
+	let player = results[1];
 
 	loadPlaylist(player, playlist);
 
 	source.addEventListener('video:new', function(e) {
-		var videos = JSON.parse(e.data);
-		videos.forEach(function(video) { player.add(video) });
+		let videos = JSON.parse(e.data);
+		for (let video of videos) {
+			player.add(video);
+		}
 		if (videos.length > 0) {
-			var jPlayer = $('#jplayer').data().jPlayer;
-			var currentVideo = load('currentVideo');
+			let jPlayer = $('#jplayer').data().jPlayer;
+			let currentVideo = load('currentVideo');
 			if (jPlayer.status.paused && currentVideo && currentVideo.ended) {
 				player.select(player.current + 1);
 				save('currentVideo', player.playlist[player.current]);
